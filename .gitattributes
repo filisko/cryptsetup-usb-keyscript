@@ -1,0 +1,6 @@
+.github
+.gitignore
+.gitattributes
+tests
+watch.sh
+*.log
