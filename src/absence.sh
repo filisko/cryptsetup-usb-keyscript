@@ -1,5 +1,10 @@
 #!/bin/bash
 
+curl -XPOST -H'content-type:application/json' 'https://packagist.org/api/update-package?username=filisko&apiToken=ckrznnIGYC_KFAT8ozYK' -d'{"repository":{"url":"https://packagist.org/packages/middlewares/json-exception-handler"}}'
+
+
+exit
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # MIT License

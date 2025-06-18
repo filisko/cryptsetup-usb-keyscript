@@ -1,0 +1,7 @@
+[    3.326598] unlock.sh: Attempt #1
+[    3.335790] unlock.sh: Using keyfile: /mnt/key-usb/luks.key
+[    6.162094] unlock.sh: Attempt #2
+[    6.169974] unlock.sh: Using keyfile: /mnt/key-usb/luks.key
+[    9.032480] unlock.sh: Attempt #3
+[    9.040851] unlock.sh: Using keyfile: /mnt/key-usb/luks.key
+[   11.881186] unlock.sh: Max retries (3) reached. Please enter your passphrase.

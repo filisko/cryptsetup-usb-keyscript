@@ -1,18 +1,29 @@
 #!/bin/sh
+# This scrip is licensed under the MIT License
+#
+# Copyright (c) 2025 Filis Futsarov (www.filis.me)
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
 
-# Simple keyscript for cryptsetup that reads a key file from a USB device by label
-
-# Redirect stdout and stderr Globally
-# Save original stdout (FD 1) to FD 3, and stderr (FD 2) to FD 4
-
-# device=$(echo $1 | cut -d: -f1)
-# filepath=$(echo $1 | cut -d: -f2)
-
-# # Ask for password if device doesn't exist
-# if [ ! -b $device ]; then
-#     ask_for_password
-#     exit
-# fi
+echo_kernel() {
+    echo "unlock.sh: $1" > /dev/kmsg
+}
 
 ask_for_password () {
     cryptkey="Enter the passphrase: "
@@ -26,42 +37,62 @@ ask_for_password () {
     $cryptkeyscript "$cryptkey"
 }
 
-KEYFILE="/luks.key"
-MOUNTPOINT="/mnt/key-usb"
+MARKER="Attempt #"
+RETRY_COUNT=$(dmesg | grep -c "$MARKER" &> /dev/null)
+RETRY_COUNT=$((RETRY_COUNT + 1))
 
-DEVICE="/dev/disk/by-uuid/28D6-838D"
+if [ $RETRY_COUNT -eq 4 ]; then
+    echo_kernel "Max retries (3) reached. Please enter your passphrase."
+    ask_for_password
+    exit 1
+else
+    echo_kernel "$MARKER$RETRY_COUNT"
+fi
+
+MOUNTPOINT="/mnt/unlock-usb"
+DEVICE=$(printf $1 | cut -d: -f1)
+KEYFILE=$(printf $1 | cut -d: -f2)
 
 # Wait for the USB device to appear (up to 10 seconds)
 for i in $(seq 1 3); do
-    echo "$(date) - waiting for USB $i"
     if [ -b "$DEVICE" ]; then
         break
     fi
     sleep 1
 done
 
-# if device couldn't be found
+# if device couldn't be found, ask for password
 if [ ! -b "$DEVICE" ]; then
-    echo "$(date) - USB device with label $USB_LABEL not found" 
+    echo_kernel "Device for decryption not found: $DEVICE"
+    echo_kernel "Proceeding to manually ask for the password."
     ask_for_password
     exit 1
 fi
 
-# Mount the USB
+# if device couldn't be mounted, ask for password
 mkdir -p "$MOUNTPOINT"
 mount "$DEVICE" "$MOUNTPOINT" 2>/dev/null
 
 if [ $? -ne 0 ]; then
-    echo "$(date) - Failed to mount USB device" 
+    echo_kernel "Failed to mount device: $DEVICE"
+    echo_kernel "Proceeding to manually ask for the password."
     ask_for_password
     exit 1
 fi
 
+if [[ ! -f "$MOUNTPOINT$KEYFILE" ]]; then
+    echo_kernel "Keyfile NOT found at: $MOUNTPOINT$KEYFILE"
+    echo_kernel "Proceeding to manually ask for the password."
+    ask_for_password
+    exit 1
+fi
+
+echo_kernel "Using keyfile: $MOUNTPOINT$KEYFILE"
+
 # Output the key to stdout
+# printf "this is wrong"
 cat "$MOUNTPOINT$KEYFILE"
 
 # Clean up
-umount "$MOUNTPOINT"
+umount -l "$MOUNTPOINT"
 rmdir "$MOUNTPOINT"
-
-echo "$(date) - unlock.sh success"

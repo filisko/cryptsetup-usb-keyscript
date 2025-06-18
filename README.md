@@ -1,8 +1,8 @@
-# 📅 Absence.IO hours reporting tool
+# 🔐 Keyscript for LUKS LVM
 
 ![ci](https://github.com/filisko/absence-hours-reporting-bash/actions/workflows/main.yaml/badge.svg)
 
-A robust and thoroughly tested Bash script to automatically register your breaks and working hours in absence.io for Mac OS and GNU/Linux.
+A robust and thoroughly tested Bash script to automatically unlock a LUKS LVM setup using a key inside a USB.
 
 ## 🔧 Setup
 
