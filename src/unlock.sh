@@ -64,7 +64,7 @@ done
 # if device couldn't be found, ask for password
 if [ ! -b "$DEVICE" ]; then
     echo_kernel "Device for decryption not found: $DEVICE"
-    echo_kernel "Proceeding to manually ask for the password"
+    echo_kernel "Proceeding to ask for the manually entering the password"
     ask_for_password
     exit 1
 fi
@@ -75,14 +75,14 @@ mount "$DEVICE" "$MOUNTPOINT" 2>/dev/null
 
 if [ $? -ne 0 ]; then
     echo_kernel "Failed to mount device: $DEVICE at $MOUNTPOINT"
-    echo_kernel "Proceeding to manually ask for the password"
+    echo_kernel "Proceeding to ask for the manually entering the password"
     ask_for_password
     exit 1
 fi
 
 if [[ ! -f "$MOUNTPOINT$KEYFILE" ]]; then
     echo_kernel "No keyfile found at: $MOUNTPOINT$KEYFILE"
-    echo_kernel "Proceeding to manually ask for the password"
+    echo_kernel "Proceeding to ask for the manually entering the password"
     ask_for_password
     exit 1
 fi
@@ -97,4 +97,4 @@ cat "$MOUNTPOINT$KEYFILE"
 umount -l "$MOUNTPOINT"
 rmdir "$MOUNTPOINT"
 
-echo_kernel "Keyfile "
+echo_kernel "System successfully decrypted"

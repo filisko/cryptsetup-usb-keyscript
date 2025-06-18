@@ -1,7 +1,7 @@
 #!/bin/bash
 
-
-cryptsetup luksOpen /dev/nvme0n1p3 nvme0n1p3_crypt
+# debe ser el valor dentro de crypttab (LUKS device name)
+cryptsetup luksOpen /dev/nvme0n1p3 cryptdata
 
 vgscan --mknodes
 vgchange -ay

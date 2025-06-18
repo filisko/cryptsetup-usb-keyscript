@@ -8,22 +8,23 @@ EFIPATH="${DEVICE}p1"
 BOOTPATH="${DEVICE}p2"
 CRYPTPATH="${DEVICE}p3"
 TARGETPATH=/mnt
+
 # Need root for mounting stuff
 if ! (( $EUID == 0 )); then echo "Please run with `sudo $0`"; fi
 
 clear_mounts () {
-# Clears mounts in case of interrupt or upon exit to allow running script multiple times
-umount $TARGETPATH/boot/efi
-umount $TARGETPATH/boot
-umount $TARGETPATH/proc
-umount $TARGETPATH/dev
-umount $TARGETPATH/run
-umount $TARGETPATH/sys
-umount $TARGETPATH
-vgchange -an
-cryptsetup close nvme0n1p3_crypt
-cryptsetup close $CRYPTNAME
-set +x
+    # Clears mounts in case of interrupt or upon exit to allow running script multiple times
+    umount $TARGETPATH/boot/efi
+    umount $TARGETPATH/boot
+    umount $TARGETPATH/proc
+    umount $TARGETPATH/dev
+    umount $TARGETPATH/run
+    umount $TARGETPATH/sys
+    umount $TARGETPATH
+    vgchange -an
+    cryptsetup close nvme0n1p3_crypt
+    cryptsetup close $CRYPTNAME
+    set +x
 }
 trap clear_mounts INT EXIT
 
