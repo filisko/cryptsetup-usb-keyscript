@@ -42,7 +42,7 @@ RETRY_COUNT=$(dmesg | grep -c "$MARKER" &> /dev/null)
 RETRY_COUNT=$((RETRY_COUNT + 1))
 
 if [ $RETRY_COUNT -eq 4 ]; then
-    echo_kernel "Max retries (3) reached. Please enter your passphrase."
+    echo_kernel "Max retries (3) reached. Proceeding to ask for manually entering the password."
     ask_for_password
     exit 1
 else
@@ -64,7 +64,7 @@ done
 # if device couldn't be found, ask for password
 if [ ! -b "$DEVICE" ]; then
     echo_kernel "Device for decryption not found: $DEVICE"
-    echo_kernel "Proceeding to ask for the manually entering the password"
+    echo_kernel "Proceeding to ask for manually entering the password"
     ask_for_password
     exit 1
 fi
@@ -75,14 +75,14 @@ mount "$DEVICE" "$MOUNTPOINT" 2>/dev/null
 
 if [ $? -ne 0 ]; then
     echo_kernel "Failed to mount device: $DEVICE at $MOUNTPOINT"
-    echo_kernel "Proceeding to ask for the manually entering the password"
+    echo_kernel "Proceeding to ask for manually entering the password"
     ask_for_password
     exit 1
 fi
 
 if [[ ! -f "$MOUNTPOINT$KEYFILE" ]]; then
     echo_kernel "No keyfile found at: $MOUNTPOINT$KEYFILE"
-    echo_kernel "Proceeding to ask for the manually entering the password"
+    echo_kernel "Proceeding to ask for manually entering the password"
     ask_for_password
     exit 1
 fi
@@ -97,4 +97,3 @@ cat "$MOUNTPOINT$KEYFILE"
 umount -l "$MOUNTPOINT"
 rmdir "$MOUNTPOINT"
 
-echo_kernel "System successfully decrypted"
