@@ -53,7 +53,7 @@ MOUNTPOINT="/mnt/unlock-usb"
 DEVICE=$(printf $1 | cut -d: -f1)
 KEYFILE=$(printf $1 | cut -d: -f2)
 
-# Wait for the USB device to appear (up to 10 seconds)
+# wait for the USB device to appear (up to 10 seconds)
 for i in $(seq 1 3); do
     if [ -b "$DEVICE" ]; then
         break
@@ -89,11 +89,11 @@ fi
 
 echo_kernel "Using keyfile: $MOUNTPOINT$KEYFILE"
 
-# Output the key to stdout
+# output the key to stdout
 # printf "this is wrong"
 cat "$MOUNTPOINT$KEYFILE"
 
-# Clean up
+# clean up
 umount -l "$MOUNTPOINT"
 rmdir "$MOUNTPOINT"
 
