@@ -6,6 +6,10 @@ A robust and thoroughly tested Bash script to automatically unlock a LUKS LVM se
 
 ## 🔧 Setup
 
+You can read this post to start with:
+
+- [How to automatically decrypt a LUKS LVM setup on boot with a USB](https://filis.me/posts/how-to-decrypt-a-luks-setup-with-a-pendrive)
+
 
 ## ⚙️ Installation
 
